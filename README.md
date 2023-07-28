@@ -1,11 +1,8 @@
 # jp-giga_oneroster_api_hub
 
-[OneRoster Logo](https://www.imsglobal.org/activity/onerosterlis)
-
+[![OneRoster Logo](https://img.shields.io/badge/OneRoster-1.2-blue.svg)](https://www.imsglobal.org/activity/onerosterlis)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-
 [![Python Version](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-311/)
-
 [![FastAPI Version](https://img.shields.io/badge/fastapi-0.68.0-blue.svg)](https://fastapi.tiangolo.com/)
 
 # 概要
