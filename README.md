@@ -1,9 +1,12 @@
 # jp-giga_oneroster_api_hub
 
 [OneRoster Logo](https://www.imsglobal.org/activity/onerosterlis)
-![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-![Python Version](https://img.shields.io/badge/python-3.8%20%7C%203.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
-![FastAPI Version](https://img.shields.io/badge/fastapi-0.68.0-blue.svg)](https://fastapi.tiangolo.com/)
+
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+[![Python Version](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-311/)
+
+[![FastAPI Version](https://img.shields.io/badge/fastapi-0.68.0-blue.svg)](https://fastapi.tiangolo.com/)
 
 # 概要
 jp_giga_oneroster_api_hubは、OneRoster CSVファイルをアップロードして、OneRoster APIを提供するPython FastAPIベースのWebアプリケーションです。このツールを使うことで、学校や教育機関は異なる教育アプリケーションとシステム間で学生や教師の情報を簡単に共有できます。
