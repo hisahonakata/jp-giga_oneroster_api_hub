@@ -1,4 +1,4 @@
-# jp-giga_oneroster_api_
+# jp-giga_oneroster_api_hub
 
 "jp-giga_oneroster_api_hub" is OneRoster API Server with FastAPI and SQlite.
 
