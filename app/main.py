@@ -24,23 +24,25 @@ if DATABASE_FILE is None:
 API_KEY_NAME = "api_key"
 api_key_query = APIKeyQuery(name=API_KEY_NAME, auto_error=False)
 
-# SQLiteデータベースを作成する関数
+# SQLiteデータベースが存在しない場合に作成する関数
 def create_database():
     connection = sqlite3.connect(DATABASE_FILE)
     cursor = connection.cursor()
 
     cursor.execute("CREATE TABLE IF NOT EXISTS AcademicSession(sourceId text, status text, dateLastModified text, title text, type text, startDate text, endDate text, parentSourcedId text, schoolYear text)")
-    cursor.execute("CREATE TABLE IF NOT EXISTS Class(sourceId text, status text, dateLastModified text, title text, grade text, courceSourcedId text, classCode text, classType text, location text, schoolSourcedId text, termSourcedIds text, subjects text, subjectCodes text, period text, specialNeeds text)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS Class(sourceId text, status text, dateLastModified text, title text, grade text, courseSourcedId text, classCode text, classType text, location text, schoolSourcedId text, termSourcedIds text, subjects text, subjectCodes text, period text, specialNeeds text)")
     cursor.execute("CREATE TABLE IF NOT EXISTS Course(sourceId text, status text, dateLastModified text, schoolYearSourcedId text, title text, courseCode text, grades text, orgSourcedId text, subjects text, subjectCodes text)")
-    cursor.execute("CREATE TABLE IF NOT EXISTS Demographics(sourceId text, status text, dateLastModified text, barthDate text, sex text)")
-    cursor.execute("CREATE TABLE IF NOT EXISTS Enrollment(sourceId text, status text, dateLastModified text, classSourcedId text, schoolSroucedId text, userSourcedId text, role text, primary text, beginDate text, endDate text, ShussekiNo text)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS Demographics(sourceId text, status text, dateLastModified text, birthDate text, sex text)")
+    # Enrollment の カラム名にPrimary が使えない
+    cursor.execute("CREATE TABLE IF NOT EXISTS Enrollment(sourceId text, status text, dateLastModified text, classSourcedId text, schoolSourcedId text, userSourcedId text, role text, beginDate text, endDate text, ShussekiNo tex)")
     cursor.execute("CREATE TABLE IF NOT EXISTS Orgs(sourceId text, status text, dateLastModified text, name text, type text, identifier text, parentSourcedId text)")
-    cursor.execute("CREATE TABLE IF NOT EXISTS Roles(sourceId text, status text, dateLastModified text, userSourcedId text, roleType text, beginDate text, endDate text, orgSourcedId text, userProfileSroucedId text)")
-    cursor.execute("CREATE TABLE IF NOT EXISTS UserProfile(sourceId text, status text, dateLastModified text, userSourcedId text, profileType text, venderId text, applicationId text, description text, credentialType text, username text, password text)")
-    cursor.execute("CREATE TABLE IF NOT EXISTS User(sourceId text, status text, dateLastModified text, enabledUser text, username text, userIds text, givenName text, familyName text, middleName text, identifier text, email text, sms text, phone text, agentSourcedIds text, grades text, password text, userMasterIdentifer text, resourceSourcedIds text, preferredGivenName text, preferredMiddleName text, preferredFamiliName text, primaryOrgSourcedId text, kanaGiveName text, kanaFamilyName text, kanaMiddleName text, homeClass text)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS Roles(sourceId text, status text, dateLastModified text, userSourcedId text, roleType text, beginDate text, endDate text, orgSourcedId text, userProfileSourcedId text)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS UserProfile(sourceId text, status text, dateLastModified text, userSourcedId text, profileType text, vendorId text, applicationId text, description text, credentialType text, username text, password text)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS User(sourceId text, status text, dateLastModified text, enabledUser text, username text, userIds text, givenName text, familyName text, middleName text, identifier text, email text, sms text, phone text, agentSourcedIds text, grades text, password text, userMasterIdentifier text, resourceSourcedIds text, preferredGivenName text, preferredMiddleName text, preferredFamilyName text, primaryOrgSourcedId text, kanaGivenName text, kanaFamilyName text, kanaMiddleName text, homeClass text)")
 
     connection.commit()
     connection.close()
+
 
 # データベースが存在しない場合に作成する
 if not os.path.exists(DATABASE_FILE):
@@ -99,18 +101,23 @@ async def get_all_users(api_key: APIKey = API_KEY):
 # 特定のユーザー情報を取得するエンドポイント (GetUser API)
 @app.get("/users/{user_id}", response_model=dict)
 async def get_user(user_id: str, api_key: APIKey = API_KEY):
-    # 提供されたAPIキーを検証
-    if not api_key_query(api_key=api_key):
-        raise HTTPException(status_code=403, detail="Invalid API Key")
+    try:
+        # 提供されたAPIキーを検証
+        if not api_key_query(api_key=api_key):
+            raise HTTPException(status_code=403, detail="Invalid API Key")
 
-    # データベースから指定されたユーザーの情報を取得
-    conn = connect_to_database()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM User WHERE sourceId = ?", (user_id,))
-    user = dict(zip([column[0] for column in cursor.description], cursor.fetchone()))
-    conn.close()
+        # データベースから指定されたユーザーの情報を取得
+        conn = connect_to_database()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM User WHERE sourceId = ?", (user_id,))
+        user = dict(zip([column[0] for column in cursor.description], cursor.fetchone()))
+        conn.close()
 
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
 
-    return user
+        return user
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"エラーが発生しました: {str(e)}")
+
